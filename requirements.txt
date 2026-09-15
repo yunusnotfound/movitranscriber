@@ -1,0 +1,3 @@
+# Test edilen surumler (Python 3.14, Windows 10). ctranslate2/av/onnxruntime bagimlilik olarak gelir.
+faster-whisper==1.2.1
+gradio==6.27.0

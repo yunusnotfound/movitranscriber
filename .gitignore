@@ -1,0 +1,7 @@
+.venv/
+models/
+python/
+packages/
+__pycache__/
+*.pyc
+.gradio/
