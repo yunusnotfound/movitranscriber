@@ -36,6 +36,26 @@ def _write_txt(source_name: str, text: str) -> str:
     return str(out)
 
 
+def model_choices() -> list[tuple[str, str]]:
+    """Açılır liste: (etiket, model anahtarı). İndirilmiş modeller işaretlenir."""
+    return [
+        (f"{key}   {'✓ hazır' if engine.is_downloaded(key) else '⬇ ilk kullanımda indirilir'}", key)
+        for key in config.MODELS
+    ]
+
+
+def default_model() -> str:
+    """İndirilmiş ilk modeli varsayılan yap (config sırasına göre); hiçbiri yoksa config'deki varsayılan."""
+    for key in config.MODELS:
+        if engine.is_downloaded(key):
+            return key
+    return config.DEFAULT_MODEL
+
+
+def refresh_models(current: str):
+    return gr.Dropdown(choices=model_choices(), value=current)
+
+
 def on_file_change(file_path: str | None):
     """Ses dosyası yüklendiyse önizleme oynatıcısını göster; video/boşsa gizle."""
     if file_path and engine.is_audio(file_path):
@@ -66,11 +86,18 @@ def transcribe(file_path: str | None, model_key: str, progress=gr.Progress()):
     progress(0, desc="Model hazırlanıyor")
 
     started = time.time()
+    work_started: float | None = None  # model yüklendikten sonraki ilk güncellemede başlar
     last = engine.Update(text="", progress=0.0, duration=0.0)
     try:
         for last in engine.transcribe_file(file_path, model_key):
+            if work_started is None:
+                work_started = time.time()
             progress(last.progress, desc="İşleniyor")
-            yield f"🎙️ İşleniyor… %{int(last.progress * 100)} — {name}", last.text, hidden_dl
+            eta = ""
+            if last.progress >= 0.05:
+                remaining = (time.time() - work_started) * (1 - last.progress) / last.progress
+                eta = f", kalan ~{_fmt_seconds(remaining)}"
+            yield f"🎙️ İşleniyor… %{int(last.progress * 100)}{eta} — {name}", last.text, hidden_dl
     except (ValueError, RuntimeError) as exc:
         raise gr.Error(str(exc)) from exc
 
@@ -104,10 +131,10 @@ with gr.Blocks(title=TITLE) as demo:
             audio_preview = gr.Audio(label="Önizleme", visible=False, interactive=False)
         with gr.Column(scale=1):
             model_dd = gr.Dropdown(
-                choices=list(config.MODELS),
-                value=config.DEFAULT_MODEL,
+                choices=model_choices(),
+                value=default_model(),
                 label="Model",
-                info="Büyük model = daha doğru, daha yavaş. İlk seçimde indirilir.",
+                info="Büyük model = daha doğru, daha yavaş. Zayıf bilgisayarda hızlı taslak için small.",
             )
             with gr.Row():
                 run_btn = gr.Button("Transkript Et", variant="primary")
@@ -128,6 +155,8 @@ with gr.Blocks(title=TITLE) as demo:
         inputs=[file_in, model_dd],
         outputs=[status, output, dl_btn],
     )
+    # Transkripsiyon sırasında model indirilmiş olabilir; listedeki "hazır" işaretlerini tazele.
+    run_event.then(refresh_models, inputs=model_dd, outputs=model_dd)
     stop_btn.click(on_stop, outputs=status, cancels=[run_event])
 
 

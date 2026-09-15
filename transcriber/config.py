@@ -17,6 +17,8 @@ MODELS: dict[str, str] = {
     "small (hızlı, düşük kalite)": "small",
 }
 DEFAULT_MODEL = "large-v3-turbo (önerilen)"
+# Zayıf bilgisayarlar için hızlı seçenek; taşınabilir pakete varsayılan olarak DEFAULT ile birlikte eklenir.
+FAST_MODEL = "small (hızlı, düşük kalite)"
 
 AUDIO_EXTS = {".mp3", ".wav", ".m4a", ".flac", ".ogg", ".aac", ".wma", ".opus"}
 VIDEO_EXTS = {".mp4", ".mkv", ".webm", ".mov", ".avi", ".m4v"}

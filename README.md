@@ -31,12 +31,16 @@ yönetici hakkı ve internet gerekmez; tarayıcıda <http://127.0.0.1:7860> aç�
 Paketi hazırlamak için (internet erişimi olan bir makinede, bir kez):
 
 ```powershell
-python tools\build_offline_package.py            # python/ + packages/ + varsayılan model
+python tools\build_offline_package.py                # python/ + packages/ + turbo ve small modelleri
+python tools\build_offline_package.py --model small  # sadece small (zayıf bilgisayarlar için küçük paket)
 python tools\build_offline_package.py --all-models   # dört modelin hepsi (~5 GB)
 ```
 
-Betik şunları yapar: gömülebilir Python'u indirir (`python/`), paketleri `packages/` altına kurar,
-seçilen modeli `models/` altına indirir ve paketi doğrular. Ağ kararsızsa her adımı birkaç kez
+(`build_offline_package.bat` aynı şeyi çift tıkla yapar.) Betik şunları yapar: gömülebilir Python'u
+indirir (`python/`), paketleri `packages/` altına kurar, seçilen modelleri `models/` altına indirir ve
+paketi doğrular. Uygulama açılışta hangi modellerin indirilmiş olduğunu listede "✓ hazır" olarak
+gösterir ve indirilmiş ilk modeli varsayılan yapar; yani sadece small ile hazırlanan paket doğrudan
+small ile açılır. Ağ kararsızsa her adımı birkaç kez
 dener; yarım kalırsa aynı komutu tekrar çalıştırın, kaldığı yerden devam eder. Paketleme makinesinde
 kurulu Python sürümü hangisiyse gömülebilir Python da o sürüm olur (3.11+ önerilir, 3.14 test edildi).
 
@@ -85,6 +89,14 @@ Hızlar 4 çekirdekli bir dizüstü CPU'su (i5-8300H) içindir; turbo değeri ö
 | kotoba-whisper-v2.0 | ~1.4 GB | Japonca'ya özel, çok iyi | ~1–1.5× | Çıktıda 。、 gibi noktalama yok |
 | medium | ~1.5 GB | İyi | ~0.7–1× | Turbo'dan yavaş ve düşük; yedek |
 | small | ~480 MB | Orta | ~3–4× | Zayıf makineler / hızlı ön izleme |
+
+### Zayıf bilgisayarlar için öneri
+
+2-4 çekirdekli, 8 GB RAM'li ofis bilgisayarlarında turbo çalışır ama yavaştır (10 dk ses ≈ 15-25 dk).
+Pratik yol: önce **small** ile hızlı bir taslak alın (10 dk ses ≈ 4-8 dk), metin önemliyse aynı
+dosyayı **turbo** ile bir kez daha çalıştırın. Durum satırı işlem sırasında kalan süreyi tahmin eder;
+uzun dosyaları öğle arası veya mesai sonuna bırakmak da işe yarar. Uygulama aynı anda tek
+transkripsiyon yapar; bekleyen dosyaları sırayla yükleyin.
 
 ## Desteklenen dosya türleri
 

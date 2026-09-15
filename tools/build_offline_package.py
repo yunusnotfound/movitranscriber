@@ -2,8 +2,8 @@
 
 İnternet erişimi olan BİR makinede, sistemdeki Python ile bir kez çalıştırılır:
 
-    python tools\\build_offline_package.py                 # varsayılan model (large-v3-turbo)
-    python tools\\build_offline_package.py --model small   # başka bir model
+    python tools\\build_offline_package.py                 # large-v3-turbo + small (~2.1 GB model)
+    python tools\\build_offline_package.py --model small   # sadece belirtilen model(ler)
     python tools\\build_offline_package.py --all-models    # listedeki tüm modeller (~5 GB)
 
 Yaptıkları (hepsi proje klasörünün içine):
@@ -199,7 +199,8 @@ def main() -> None:
     elif args.model:
         models = args.model
     else:
-        models = [config.MODELS[config.DEFAULT_MODEL]]
+        # Varsayılan: doğru model (turbo) + zayıf bilgisayarlar için hızlı model (small)
+        models = list(dict.fromkeys([config.MODELS[config.DEFAULT_MODEL], config.MODELS[config.FAST_MODEL]]))
 
     log(f"Proje: {ROOT}")
     log(f"Python {PY_VERSION} | modeller: {', '.join(models)}")
