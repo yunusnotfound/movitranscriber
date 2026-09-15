@@ -76,14 +76,15 @@ görünür. Sonraki çalıştırmalar çevrimdışıdır.
 
 ## Model rehberi
 
-Hızlar 4 çekirdekli bir dizüstü CPU'su için kaba tahmindir.
+Hızlar 4 çekirdekli bir dizüstü CPU'su (i5-8300H) içindir; turbo değeri ölçülmüş, diğerleri tahmindir.
+İlk transkripsiyonda ~15 saniyelik bir ısınma süresi eklenir.
 
 | Model | İndirme | Japonca kalitesi | Hız (gerçek zamana göre) | Not |
 |---|---|---|---|---|
-| large-v3-turbo (varsayılan) | ~1.6 GB | Çok iyi, noktalama var | ~2–3× | Genel kullanım için en iyi denge |
-| kotoba-whisper-v2.0 | ~1.4 GB | Japonca'ya özel, çok iyi | ~2–4× | Çıktıda 。、 gibi noktalama yok |
-| medium | ~1.5 GB | İyi | ~1.5–2× | Turbo'dan yavaş ve düşük; yedek |
-| small | ~480 MB | Orta | ~6–8× | Zayıf makineler / hızlı ön izleme |
+| large-v3-turbo (varsayılan) | ~1.6 GB | Çok iyi, noktalama var | ~1.1× (1 dk ses ≈ 50 sn) | Genel kullanım için en iyi denge |
+| kotoba-whisper-v2.0 | ~1.4 GB | Japonca'ya özel, çok iyi | ~1–1.5× | Çıktıda 。、 gibi noktalama yok |
+| medium | ~1.5 GB | İyi | ~0.7–1× | Turbo'dan yavaş ve düşük; yedek |
+| small | ~480 MB | Orta | ~3–4× | Zayıf makineler / hızlı ön izleme |
 
 ## Desteklenen dosya türleri
 
